@@ -3,3 +3,6 @@ Datasets/
 
 # Model is very private :)
 Model/
+
+# No cache
+__pycache__/
