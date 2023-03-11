@@ -40,11 +40,11 @@ def residual_block(
 
 def train_model(input_dim, output_dim, dropout = 0.2) :
 
-    inputs = tf.keras.layers.InputLayer(input_shape = input_dim, name = "input")
+    inputs = tf.keras.layers.Input(shape = input_dim, name = "input")
 
-    input = tf.keras.layers.Lambda(lambda x : x / 255)(inputs)
+    # input = tf.keras.layers.Lambda(lambda x : x / 255)(inputs)
 
-    x1 = residual_block(input, 16, skip_convo = True, strides = 1, dropout = dropout)
+    x1 = residual_block(inputs, 16, skip_convo = True, strides = 1, dropout = dropout)
 
     x2 = residual_block(x1, 16, skip_convo = True, strides = 2, dropout = dropout)
     x3 = residual_block(x2, 16, skip_convo = False, strides = 1, dropout = dropout)

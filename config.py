@@ -1,9 +1,11 @@
 import os
+import time
 from pickle import Pickler
 
 class ModelConfig() :
     def __init__(self) :
-        self.model_path = "Models/Handwriting_recognition"
+        t = int(time.time())
+        self.model_path = f"Models/Handwriting_recognition/{t}"
         self.vocab = ''
         self.height = 32
         self.width = 128

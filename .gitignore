@@ -2,7 +2,9 @@
 Datasets/
 
 # Model is very private :)
-Model/
+Models/
 
 # No cache
 __pycache__/
+
+temp/

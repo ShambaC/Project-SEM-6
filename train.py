@@ -72,15 +72,16 @@ import cv2
 import numpy as np
 import copy
 
-for tups in dataset :
+for tups in tqdm(dataset) :
     img = cv2.imread(tups[0])
     img = cv2.resize(img, (configs.width, configs.height), interpolation= cv2.INTER_AREA)
-    cv2.imwrite(tups[0], img)
+    img = np.array([img]) / 255.0
 
     labIndex = np.array([configs.vocab.index(l) for l in tups[1] if l in configs.vocab])
     labPad = np.pad(labIndex, (0, configs.max_text_length - len(labIndex)), 'constant', constant_values=len(configs.vocab))
 
-    tups[1] = labPad
+    tups[0] = img
+    tups[1] = np.array([labPad])
 
 # Validation split
 np.random.shuffle(dataset)
@@ -118,6 +119,8 @@ model.fit(
     callbacks = [earlystopper, checkpoint, tb_callback, reduceLROnPlat],
     workers = configs.train_workers
 )
+
+model.save(f"{configs.model_path}/model.meow")
 
 # saving datasets as csv
 import pandas as pd
