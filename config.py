@@ -1,3 +1,11 @@
 class ModelConfig() :
     def __init__(self) :
         self.model_path = "Models/Handwriting_recognition"
+        self.vocab = ''
+        self.height = 32
+        self.width = 128
+        self.max_text_length = 0
+        self.batch_size = 16
+        self.learning_rate = 0.0005
+        self.train_epochs = 100
+        self.train_workers = 20
