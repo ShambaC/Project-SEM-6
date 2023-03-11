@@ -1,0 +1,5 @@
+# No need to sync dataset
+Datasets/
+
+# Model is very private :)
+Model/
