@@ -2,7 +2,7 @@ import tensorflow as tf
 
 from config import ModelConfig
 from model import train_model
-from CustomTF import CTCloss, CWERMetric
+from CustomTF import CTCloss, CWERMetric, DataProvider
 
 from tqdm import tqdm
 import os
@@ -66,30 +66,16 @@ configs.vocab = "".join(vocab)
 configs.max_text_length = max_len
 configs.save()
 
-# Modify dataset for tensorflow
+# Create a data provider for tensorflow
 
-import cv2
-import numpy as np
-import copy
-
-for tups in tqdm(dataset) :
-    img = cv2.imread(tups[0])
-    img = cv2.resize(img, (configs.width, configs.height), interpolation= cv2.INTER_AREA)
-    img = np.array([img]) / 255.0
-
-    labIndex = np.array([configs.vocab.index(l) for l in tups[1] if l in configs.vocab])
-    labPad = np.pad(labIndex, (0, configs.max_text_length - len(labIndex)), 'constant', constant_values=len(configs.vocab))
-
-    tups[0] = img
-    tups[1] = np.array([labPad])
+data_provider = DataProvider(
+    dataset,
+    configs.vocab,
+    configs.max_text_length,
+)
 
 # Validation split
-np.random.shuffle(dataset)
-train_data = copy.deepcopy(dataset)
-val_data = copy.deepcopy(dataset)
-
-train_data = train_data[ : int(len(dataset) * configs.validation_split)]
-val_data = val_data[int(len(dataset) * configs.validation_split) : ]
+train_data_provider, val_data_provider = data_provider.split(split= 0.9)
 
 # Create model architecture
 model = train_model(
@@ -106,15 +92,15 @@ model.compile(
 model.summary(line_length = 110)
 
 # Callbacks
-earlystopper = tf.keras.callbacks.EarlyStopping(monitor= 'val_CER', patience= '20', verbose= 1)
+earlystopper = tf.keras.callbacks.EarlyStopping(monitor= 'val_CER', patience= 20, verbose= 1)
 checkpoint = tf.keras.callbacks.ModelCheckpoint(f"{configs.model_path}/model.h5", monitor= 'val_CER', verbose= 1, save_best_only= True, mode= 'min')
 tb_callback = tf.keras.callbacks.TensorBoard(f"{configs.model_path}/logs", update_freq= 1)
 reduceLROnPlat = tf.keras.callbacks.ReduceLROnPlateau(monitor= 'val_CER', factor= 0.9, min_delta= 1e-10, patience= 10, verbose= 1, mode= 'auto')
 
 # Train
 model.fit(
-    train_data,
-    validation_data = val_data,
+    train_data_provider,
+    validation_data = val_data_provider,
     epochs = configs.train_epochs,
     callbacks = [earlystopper, checkpoint, tb_callback, reduceLROnPlat],
     workers = configs.train_workers
@@ -123,12 +109,5 @@ model.fit(
 model.save(f"{configs.model_path}/model.meow")
 
 # saving datasets as csv
-import pandas as pd
-
-path = f"{configs.model_path}/train.csv"
-df = pd.DataFrame(train_data)
-df.to_csv(path, index= False)
-
-path = f"{configs.model_path}/val.csv"
-df = pd.DataFrame(val_data)
-df.to_csv(path, index= False)
+train_data_provider.to_csv(f"{configs.model_path}/train.csv")
+val_data_provider.to_csv(f"{configs.model_path}/val.csv")
