@@ -1,6 +1,6 @@
 import os
 import time
-from pickle import Pickler
+from pickle import Pickler, Unpickler
 
 class ModelConfig() :
     def __init__(self) :
@@ -23,3 +23,9 @@ class ModelConfig() :
         
         with open(file_name, 'wb') as wf :
             Pickler(wf).dump(self)
+
+    def load(self, filePath) :
+
+        with open(filePath, 'rb') as rf :
+            config = Unpickler(rf).load()
+            return config
