@@ -3,7 +3,7 @@ Handwritten text recognition
 
 ## What ?
 Handwritten text recognition using Long Short Term Memory implementation of RNN. Honestly I don't know what's happening here.
-The [IAM Handwriting Database](https://fki.tic.heia-fr.ch/databases/iam-handwriting-database) is used to traing the network. Specifically the words dataset.
+The [IAM Handwriting Database](https://fki.tic.heia-fr.ch/databases/iam-handwriting-database) is used to train the network. Specifically the words dataset.
 
 ## How to ?
 Clone the repo and then do the following.
@@ -62,7 +62,7 @@ Clone the repo and then do the following.
 - RAM usage was around 2 GBs.
 - You can visualise the training using tensorboard. Run `tensorboard --logdir = path_to_logs` in terminal to start the server.
 - The logs are located at the following folder : `Models/Handwriting_recognition/{timestamp}/logs`
-- After training a bunch of files are generated. The only important files are `model.meow` and `configs.meow`.
+- After training, a bunch of files are generated. The only important files are `model.meow` and `configs.meow`.
 
 ### Run the model
 - You can run the `inferenceModel.py` to check with only one image from the dataset itself.
