@@ -40,30 +40,31 @@ def residual_block(
 
 def train_model(input_dim, output_dim, dropout = 0.2) :
 
-    inputs = tf.keras.layers.Input(shape = input_dim, name = "input")
+      inputs = tf.keras.layers.Input(shape = input_dim, name = "input")
 
-    input = tf.keras.layers.Lambda(lambda x : x / 255)(inputs)
+      # Normalize images here
+      input = tf.keras.layers.Lambda(lambda x : x / 255)(inputs)
 
-    x1 = residual_block(input, 16, skip_convo = True, strides = 1, dropout = dropout)
+      x1 = residual_block(input, 16, skip_convo = True, strides = 1, dropout = dropout)
 
-    x2 = residual_block(x1, 16, skip_convo = True, strides = 2, dropout = dropout)
-    x3 = residual_block(x2, 16, skip_convo = False, strides = 1, dropout = dropout)
+      x2 = residual_block(x1, 16, skip_convo = True, strides = 2, dropout = dropout)
+      x3 = residual_block(x2, 16, skip_convo = False, strides = 1, dropout = dropout)
 
-    x4 = residual_block(x3, 32, skip_convo = True, strides = 2, dropout = dropout)
-    x5 = residual_block(x4, 32, skip_convo = False, strides = 1, dropout = dropout)
+      x4 = residual_block(x3, 32, skip_convo = True, strides = 2, dropout = dropout)
+      x5 = residual_block(x4, 32, skip_convo = False, strides = 1, dropout = dropout)
 
-    x6 = residual_block(x5, 64, skip_convo = True, strides = 2, dropout = dropout)
-    x7 = residual_block(x6, 64, skip_convo = True, strides = 1, dropout = dropout)
+      x6 = residual_block(x5, 64, skip_convo = True, strides = 2, dropout = dropout)
+      x7 = residual_block(x6, 64, skip_convo = True, strides = 1, dropout = dropout)
 
-    x8 = residual_block(x7, 64, skip_convo = False, strides = 1, dropout = dropout)
-    x9 = residual_block(x8, 64, skip_convo = False, strides = 1, dropout = dropout)
+      x8 = residual_block(x7, 64, skip_convo = False, strides = 1, dropout = dropout)
+      x9 = residual_block(x8, 64, skip_convo = False, strides = 1, dropout = dropout)
 
-    squeeze = tf.keras.layers.Reshape((x9.shape[-3] * x9.shape[-2], x9.shape[-1]))(x9)
+      squeeze = tf.keras.layers.Reshape((x9.shape[-3] * x9.shape[-2], x9.shape[-1]))(x9)
 
-    blstm = tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(128, return_sequences = True))(squeeze)
-    blstm = tf.keras.layers.Dropout(dropout)(blstm)
+      blstm = tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(128, return_sequences = True))(squeeze)
+      blstm = tf.keras.layers.Dropout(dropout)(blstm)
 
-    output = tf.keras.layers.Dense(output_dim + 1, activation = 'softmax', name = "output")(blstm)
+      output = tf.keras.layers.Dense(output_dim + 1, activation = 'softmax', name = "output")(blstm)
 
-    model = tf.keras.Model(inputs = inputs, outputs = output)
-    return model
+      model = tf.keras.Model(inputs = inputs, outputs = output)
+      return model

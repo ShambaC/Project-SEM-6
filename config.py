@@ -16,7 +16,7 @@ class ModelConfig() :
         self.train_workers = 20
         self.validation_split = 0.9
 
-    # Save config as yaml file
+    # Save config as a file
     def save(self) :
         os.makedirs(self.model_path)
         file_name = f"{self.model_path}/configs.meow"
@@ -24,6 +24,7 @@ class ModelConfig() :
         with open(file_name, 'wb') as wf :
             Pickler(wf).dump(self)
 
+    # Load config from a file
     def load(self, filePath) :
 
         with open(filePath, 'rb') as rf :

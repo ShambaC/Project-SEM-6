@@ -3,7 +3,6 @@ import numpy as np
 from itertools import groupby
 import tensorflow as tf
 from config import ModelConfig
-from CustomTF import CTCloss, CWERMetric
 
 def ctc_decoder(predictions, chars) :
 
